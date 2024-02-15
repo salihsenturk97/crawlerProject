@@ -16,24 +16,57 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Service
 public class CrawlerServiceImpl implements CrawlerService {
+    private static final int THREAD_POOL_SIZE = 5;
+
     @Override
-    public List<Result> inquireResults(Long page) throws IOException {
+    public List<Result> inquireResults(Long page) throws IOException, InterruptedException {
         List<String> totalIdList = new ArrayList<>();
-        if(Objects.isNull(page)){
-            page = 10L ;
+        if (Objects.isNull(page)) {
+            page = 10L;
         }
+        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+
+
+        List<CompletableFuture<List<String>>> futures = new ArrayList<>();
+
+
         for (int i = 1; i <= page; i++) {
-            totalIdList.addAll(getIdsFromApi(i));
+            final int currentPage = i;
+            CompletableFuture<List<String>> future = CompletableFuture.supplyAsync(() -> getIdsFromApi(currentPage), executorService);
+            futures.add(future);
         }
-        List<Result> results = new ArrayList<>();
-        for (String id : totalIdList) {
-            String content = fetchContentFromURL(Integer.parseInt(id));
-            Result result = saveTxt(Integer.parseInt(id), content);
-            results.add(result);
-        }
+
+        totalIdList = futures.stream()
+                .map(CompletableFuture::join)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        List<CompletableFuture<Result>> contentFutures = totalIdList.stream()
+                .map(id -> CompletableFuture.supplyAsync(() -> {
+                    try {
+                        String content = fetchContentFromURL(Integer.parseInt(id));
+                        return saveTxt(Integer.parseInt(id), content);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }, executorService))
+                .collect(Collectors.toList());
+
+        List<Result> results = contentFutures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
+
+
+        executorService.shutdown();
+
         return results;
     }
 

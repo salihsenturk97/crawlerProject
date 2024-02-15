@@ -18,7 +18,7 @@ public class CrawlerController {
     private CrawlerService crawlerService;
 
     @GetMapping("/articles")
-    public ResponseEntity<List<Result>> getArticles(@RequestParam(required = false) Long page) throws IOException {
+    public ResponseEntity<List<Result>> getArticles(@RequestParam(required = false) Long page) throws IOException, InterruptedException {
         List<Result> results = this.crawlerService.inquireResults(page);
         return ResponseEntity.ok(results);
     }

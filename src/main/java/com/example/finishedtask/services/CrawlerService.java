@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface CrawlerService {
-    List<Result> inquireResults(Long page) throws IOException;
+    List<Result> inquireResults(Long page) throws IOException, InterruptedException;
 
     Result inquireResultById(String id) throws IOException;
 }

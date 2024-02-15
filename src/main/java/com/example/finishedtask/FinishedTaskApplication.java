@@ -9,7 +9,7 @@ import java.io.IOException;
 
 @SpringBootApplication
 public class FinishedTaskApplication {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		SpringApplication.run(FinishedTaskApplication.class, args);
 			CrawlerService crawlerService = new CrawlerServiceImpl();
 			crawlerService.inquireResults(null);
