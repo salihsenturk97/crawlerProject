@@ -14,7 +14,10 @@ Belirli bir ilan ID'sine göre ilan detaylarını getiren metod.
 
 `Controller` sınıfı, bu servisi kullanarak HTTP GET isteklerine cevap verir. İlgili API endpoint'leri şu şekildedir:
 
-- **/articles** (GET): Bu endpoint, tüm ilanların listesini getirir.
+- **/articles** (GET): Bu endpoint, tüm ilanların listesini getirir. (?page=5) RequestParam ile kaç sayfayı tarayacağını belirtebilirsiniz
+- ![img_3.png](img_3.png)
+
+##
 ![img.png](img.png)
 - **/articles/{id}** (GET): Bu endpoint, belirli bir ilan ID'sine göre ilan detaylarını getirir.
 ![img_1.png](img_1.png)
