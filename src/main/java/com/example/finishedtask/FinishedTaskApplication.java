@@ -12,6 +12,6 @@ public class FinishedTaskApplication {
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(FinishedTaskApplication.class, args);
 			CrawlerService crawlerService = new CrawlerServiceImpl();
-			crawlerService.inquireResults();
+			crawlerService.inquireResults(null);
 	}
 }

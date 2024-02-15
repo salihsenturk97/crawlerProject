@@ -15,13 +15,17 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 @Service
 public class CrawlerServiceImpl implements CrawlerService {
     @Override
-    public List<Result> inquireResults() throws IOException {
+    public List<Result> inquireResults(Long page) throws IOException {
         List<String> totalIdList = new ArrayList<>();
-
-        for (int i = 1; i <= 10; i++) {
+        if(Objects.isNull(page)){
+            page = 10L ;
+        }
+        for (int i = 1; i <= page; i++) {
             totalIdList.addAll(getIdsFromApi(i));
         }
         List<Result> results = new ArrayList<>();
